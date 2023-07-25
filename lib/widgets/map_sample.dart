@@ -7,6 +7,7 @@ import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../model/place.dart';
+import 'custom_painter.dart';
 
 class MapSample extends StatefulWidget {
   const MapSample({super.key});
@@ -79,29 +80,19 @@ class _MapSampleState extends State<MapSample> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
-          onTap: (location) {
-            if (kDebugMode) {
-              print('${location.longitude} - ${location.latitude}');
-            }
-            setState(() {
-              items.add(
-                Place(
-                  name: 'Custom Place',
-                  latLng: LatLng(location.longitude, location.latitude),
-                ),
-              );
-              _initClusterManager();
-            });
-          },
-          mapType: MapType.normal,
-          initialCameraPosition: _parisCameraPosition,
-          markers: markers,
-          onMapCreated: (GoogleMapController controller) {
-            _controller.complete(controller);
-            _manager.setMapId(controller.mapId);
-          },
-          onCameraMove: _manager.onCameraMove,
-          onCameraIdle: _manager.updateMap),
+        onTap: (location) {
+          //
+        },
+        mapType: MapType.normal,
+        initialCameraPosition: _parisCameraPosition,
+        markers: markers,
+        onMapCreated: (GoogleMapController controller) {
+          _controller.complete(controller);
+          _manager.setMapId(controller.mapId);
+        },
+        onCameraMove: _manager.onCameraMove,
+        onCameraIdle: _manager.updateMap,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _manager.setItems(<Place>[
@@ -142,9 +133,9 @@ class _MapSampleState extends State<MapSample> {
     final Paint paint1 = Paint()..color = const Color.fromARGB(255, 5, 72, 255);
     final Paint paint2 = Paint()..color = Colors.white;
 
-    canvas.drawCircle(Offset(size / 2, size / 2), size / 2.0, paint1);
-    canvas.drawCircle(Offset(size / 2, size / 2), size / 2.2, paint2);
-    canvas.drawCircle(Offset(size / 2, size / 2), size / 2.8, paint1);
+    canvas.drawCircle(Offset(size / 2, size / 2), size / 2.2, paint1);
+    canvas.drawCircle(Offset(size / 2, size / 2), size / 2.4, paint2);
+    canvas.drawCircle(Offset(size / 2, size / 2), size / 3.0, paint1);
 
     if (text != null) {
       TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
@@ -160,6 +151,26 @@ class _MapSampleState extends State<MapSample> {
         canvas,
         Offset(size / 2 - painter.width / 2, size / 2 - painter.height / 2),
       );
+    } else {
+      CustomPaint(
+        painter: MyCustomPainter(),
+        size: Size(200, 200), // Replace this with your desired size
+      );
+      
+      TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
+      painter.text = TextSpan(
+        text: 'Place 1',
+        style: TextStyle(
+            fontSize: size / 3,
+            color: const Color.fromARGB(255, 255, 255, 255),
+            fontWeight: FontWeight.bold),
+      );
+      painter.layout();
+      painter.paint(
+        canvas,
+        Offset(size / 2 - painter.width / 2, size / 2 - painter.height / 2),
+      );
+      
     }
 
     final img = await pictureRecorder.endRecording().toImage(size, size);
